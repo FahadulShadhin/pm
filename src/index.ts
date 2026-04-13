@@ -6,12 +6,12 @@ function handleUnlock() {
   console.log('🔓 Unlocking password manager...');
 }
 
-(function main() {
+(async function main() {
   const command = process.argv[2];
 
   switch (command) {
     case 'init':
-      handleInit();
+      await handleInit();
       break;
 
     case 'unlock':
