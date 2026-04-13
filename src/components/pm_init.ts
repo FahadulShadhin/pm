@@ -171,7 +171,7 @@ export class PMInit {
   }
 }
 
-export const handleInit = async () => {
+export async function handleInit() {
   const mgr = new PMInit();
   await mgr.init();
-};
+}
