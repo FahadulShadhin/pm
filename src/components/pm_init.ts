@@ -1,11 +1,7 @@
 import fs from 'fs';
-import path from 'path';
-import os from 'os';
 import crypto from 'crypto';
 import readline from 'readline';
-
-const DEFAULT_VAULT_DIR = path.join(os.homedir(), '.pm');
-const DEFAULT_VAULT_FILE = path.join(DEFAULT_VAULT_DIR, 'vault.json.enc');
+import { DEFAULT_VAULT_DIR, DEFAULT_VAULT_FILE } from '../utils/constants';
 
 export class PMInit {
   private vaultDir: string;
@@ -169,9 +165,4 @@ export class PMInit {
 
     console.log('Vault initialized successfully');
   }
-}
-
-export async function handleInit() {
-  const mgr = new PMInit();
-  await mgr.init();
 }

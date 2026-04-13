@@ -1,22 +1,21 @@
 #!/usr/bin/env node
 
-import { handleInit } from './components/pm_init';
-
-function handleUnlock() {
-  console.log('🔓 Unlocking password manager...');
-}
+import { PMInit } from './components/pm_init';
+import { PMAdd } from './components/pm_add';
 
 (async function main() {
   const command = process.argv[2];
 
   switch (command) {
     case 'init':
-      await handleInit();
-      break;
+      const pmInit = new PMInit();
+      await pmInit.init();
+      process.exit(0);
 
-    case 'unlock':
-      handleUnlock();
-      break;
+    case 'add':
+      const pmAdd = new PMAdd();
+      pmAdd.addAccount();
+      process.exit(0);
 
     default:
       console.log(`Unknown command: ${command}`);
