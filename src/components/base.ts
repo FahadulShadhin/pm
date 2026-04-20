@@ -2,7 +2,7 @@ import fs from 'fs';
 import crypto from 'crypto';
 import readline from 'readline';
 
-export class PMBase {
+export class Base {
   public async prompt(question: string): Promise<string> {
     return new Promise((resolve) => {
       const rl = require('readline').createInterface({
