@@ -1,48 +1,42 @@
 import fs from 'fs';
 import crypto from 'crypto';
 import { DEFAULT_VAULT_DIR, DEFAULT_VAULT_FILE } from '../utils/constants';
-import { PMInit } from './pm_init';
+import { PMBase } from './pm_base';
 
 export class PMAdd {
-  private vaultDir: string;
   private vaultFile: string;
-  private pmInit: PMInit;
+  private pmBase: PMBase;
 
-  constructor(
-    vaultDir = DEFAULT_VAULT_DIR,
-    vaultFile = DEFAULT_VAULT_FILE,
-    pmInit = new PMInit()
-  ) {
-    this.vaultDir = vaultDir;
+  constructor(vaultFile = DEFAULT_VAULT_FILE, pmBase = new PMBase()) {
     this.vaultFile = vaultFile;
-    this.pmInit = pmInit;
+    this.pmBase = pmBase;
   }
 
-  public async addAccount() {
+  public async addAccount(): Promise<void> {
     if (!fs.existsSync(this.vaultFile)) {
       console.log('Vault not found. Please run "pm init" first.');
       process.exit(1);
     }
 
-    const masterPassword = await this.pmInit.promptHidden(
+    const masterPassword = await this.pmBase.promptHidden(
       'Enter master password: '
     );
     const file = JSON.parse(fs.readFileSync(this.vaultFile, 'utf8'));
     const salt = Buffer.from(file.salt, 'base64');
-    const key = this.pmInit.deriveKey(masterPassword, salt);
+    const key = this.pmBase.deriveKey(masterPassword, salt);
     let vault;
 
     try {
-      const decrypted = this.pmInit.decrypt(file, key);
+      const decrypted = this.pmBase.decrypt(file, key);
       vault = JSON.parse(decrypted);
     } catch (err) {
       console.log('Incorrect master password. Please try again.');
       process.exit(1);
     }
 
-    const site = await this.pmInit.prompt('Site: ');
-    const username = await this.pmInit.prompt('Username: ');
-    const password = await this.pmInit.promptHidden('Password: ');
+    const site = await this.pmBase.prompt('Site: ');
+    const username = await this.pmBase.prompt('Username: ');
+    const password = await this.pmBase.promptHidden('Password: ');
 
     const newAccount = {
       id: crypto.randomUUID(),
@@ -54,7 +48,7 @@ export class PMAdd {
 
     vault.accounts.push(newAccount);
 
-    const enctypted = this.pmInit.encrypt(JSON.stringify(vault), key);
+    const enctypted = this.pmBase.encrypt(JSON.stringify(vault), key);
 
     const payload = {
       salt: file.salt,
