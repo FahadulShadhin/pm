@@ -1,11 +1,11 @@
 import fs from 'fs';
 import crypto from 'crypto';
-import { Vault } from './vault';
+// import { Vault } from './vault';
 import { DEFAULT_VAULT_DIR, DEFAULT_VAULT_FILE } from '../utils/constants';
 import { PMInit } from './pm_init';
 
 export class PMAdd {
-  private vault: Vault;
+  // private vault: Vault;
   private vaultDir: string;
   private vaultFile: string;
   private pmInit: PMInit;
@@ -13,12 +13,12 @@ export class PMAdd {
   constructor(
     vaultDir = DEFAULT_VAULT_DIR,
     vaultFile = DEFAULT_VAULT_FILE,
-    pmInit = new PMInit(),
-    vault = new Vault()
+    pmInit = new PMInit()
+    // vault = new Vault()
   ) {
     this.vaultDir = vaultDir;
     this.vaultFile = vaultFile;
-    this.vault = vault;
+    // this.vault = vault;
     this.pmInit = pmInit;
   }
 
