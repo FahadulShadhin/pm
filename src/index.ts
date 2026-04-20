@@ -14,7 +14,7 @@ import { PMAdd } from './components/pm_add';
 
     case 'add':
       const pmAdd = new PMAdd();
-      pmAdd.addAccount();
+      await pmAdd.addAccount();
       process.exit(0);
 
     default:

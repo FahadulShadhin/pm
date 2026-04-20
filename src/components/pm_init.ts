@@ -12,7 +12,47 @@ export class PMInit {
     this.vaultFile = vaultFile;
   }
 
-  private async promptHidden(question: string): Promise<string> {
+  public async prompt(question: string): Promise<string> {
+    return new Promise((resolve) => {
+      const rl = require('readline').createInterface({
+        input: process.stdin,
+        output: process.stdout,
+      });
+
+      rl.question(question, (answer: string) => {
+        rl.close();
+
+        // Ensure stdin is in a clean state for subsequent raw-mode prompts
+        try {
+          if (typeof process.stdin.setRawMode === 'function') {
+            process.stdin.setRawMode(false);
+          }
+        } catch (e) {
+          // ignore
+        }
+
+        try {
+          process.stdin.resume();
+        } catch (e) {
+          // ignore
+        }
+
+        // Consume any leftover pending data (e.g. newline) so next raw-mode listener doesn't immediately receive it
+        const onData = (_chunk: Buffer | string) => {
+          try {
+            process.stdin.removeListener('data', onData as any);
+          } catch (e) {
+            // ignore
+          }
+        };
+
+        process.stdin.on('data', onData as any);
+        resolve(answer.trim());
+      });
+    });
+  }
+
+  public async promptHidden(question: string): Promise<string> {
     return new Promise((resolve) => {
       readline.emitKeypressEvents(process.stdin);
 
@@ -72,15 +112,15 @@ export class PMInit {
 
       stdin.setRawMode?.(true);
       stdin.on('keypress', onKeypress);
-      stdin.on('data', onData as any);
+      stdin.on('data', onData);
     });
   }
 
-  private deriveKey(password: string, salt: Buffer): Buffer {
+  public deriveKey(password: string, salt: Buffer): Buffer {
     return crypto.scryptSync(password, salt, 32);
   }
 
-  private encrypt(data: string, key: Buffer) {
+  public encrypt(data: string, key: Buffer) {
     const iv = crypto.randomBytes(12);
     const cipher = crypto.createCipheriv('aes-256-gcm', key, iv);
 
@@ -97,7 +137,7 @@ export class PMInit {
     };
   }
 
-  private decrypt(
+  public decrypt(
     payload: { iv: string; tag: string; data: string },
     key: Buffer
   ): string {
