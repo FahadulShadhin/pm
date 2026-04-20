@@ -1,6 +1,5 @@
 import fs from 'fs';
 import crypto from 'crypto';
-import readline from 'readline';
 import { DEFAULT_VAULT_DIR, DEFAULT_VAULT_FILE } from '../utils/constants';
 import { PMBase } from './pm_base';
 
